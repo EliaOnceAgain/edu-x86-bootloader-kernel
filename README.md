@@ -2,20 +2,27 @@
 ![C](https://img.shields.io/badge/_-C-555555.svg?style=for-the-badge)
 
 # edu-x86-bootloader-kernel
-My journey of learning about legacy bios and MBR x86 bootloaders leading to a micro kernel
-using NASM assembly
+My journey of learning about legacy bios and MBR x86 bootloaders using NASM assembly, leading to a C micro kernel
 
+This is solely for educational purposes. The codebase prioritizes simplicity and readability over efficiency.
 
 ### Installation
 
-##### Install NASM
-`sudo apt install nasm`
+##### Quick Start
+```
+git clone https://github.com/EliaOnceAgain/edu-x86-bootloader-kernel.git
+cd edu-x86-bootloader-kernel
+make run
+```
 
-##### Install QEMU
-`sudo apt install qemu-system-x86`
+### Dependencies
 
-### Build & Run
-`make`
+##### NASM & QEMU
+```
+sudo apt install nasm
+sudo apt install qemu-system-x86
+```
 
-### Run
-`qemu-system-x86_64 kern.img`
+### References
+[![Repo](https://badgen.net/badge/icon/GitHub?icon=github&label=basekernel)](https://github.com/dthain/basekernel)
+[![Repo](https://badgen.net/badge/icon/GitHub?icon=github&label=539kernel)](https://github.com/MaaSTaaR/539kernel)
