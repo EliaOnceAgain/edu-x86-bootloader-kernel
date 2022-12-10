@@ -40,24 +40,37 @@ start:
     call print_str
 
     call load_kernel_to_mem
-    jmp 0x0900:0x00
+    jmp 0x0900:0x0000
 
 ; load kernel
 load_kernel_to_mem:
+    ; read multiple sectors
+    mov ax, [CURR_SECTOR_TO_READ]
+    sub ax, 2
+    mov bx, 0x0200                              ; 512 bytes
+    mul bx                                      ; implicitly uses AX as second operand and stores result in DX:AX
+    mov bx, ax                                  ; offset [0, 512, 1024, ...]
+
     ; bios service 0x13:0x02 reads from disk to
     ; memory address ES:BX
     mov ax, 0x0900
     mov es, ax
 
-    mov ah, 0x02                                ; read sectors from disk into mem
+    mov ah, 0x02                                ; service to read from disk to memory
     mov al, 0x01                                ; sectors to read count
     mov ch, 0x00                                ; track
-    mov cl, 0x02                                ; sector
+    mov cl, [CURR_SECTOR_TO_READ]               ; sector
     mov dh, 0x00                                ; head
     mov dl, [BOOT_DRIVE]                        ; disk type 1st hard disk
-    mov bx, 0x00                                ; offset (ES:BX)
     int 0x13                                    ; 0x13:0x02 sets CF=0 on success, otherwise CF=1 AX=errno
     jc handle_load_err                          ; handle error if CF=1
+
+    ; decrese num sectors left to read, increase current sector
+    sub byte [NUM_SECTORS], 1
+    add byte [CURR_SECTOR_TO_READ], 1
+    cmp byte [NUM_SECTORS], 0
+    jne load_kernel_to_mem
+
     ret
 
 handle_load_err:
@@ -92,6 +105,9 @@ BOOT_DRIVE          db 0
 TITLE_STR           db "Bootloader for Curn", 0
 LOADING_STR         db "Loading Curn...", 0
 ERR_LOAD_STR        db "Failed to load Curn", 0
+NUM_SECTORS         db 0x0f                     ; 15 sectors = 7.5kb
+CURR_SECTOR_TO_READ db 0x02
+
 
 ; the bootloader sector must end with the magic code 0xAA55
 ; ($-$$) nasm special expression to calculate program size in bytes
