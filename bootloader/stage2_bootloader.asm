@@ -3,6 +3,7 @@ bits 16
 
 ; external symbols defined elsewhere and linked by the linker
 extern kernel_main
+extern interrupt_handler
 
 start:
     ; initialize segments
@@ -64,6 +65,55 @@ enable_protected_mode:
     ret
 
 setup_interrupts:
+    call remap_pic
+    call load_idt
+    ret
+
+remap_pic:
+    ; PIC init command makes the PIC wait for 3 extra "initialisation words"
+    ; on the data port:
+    ; (1) vector offset
+    ; (2) how it is wired to master/slaves
+    ; (3) additional information about the environment
+    mov al, 0x11        ; init PIC command code
+
+    ; init trigger
+    ; x86 out instruction writes on given I/O port located
+    ; in the processor's I/O address space
+    out 0x20, al        ; send init command to master PIC command port 0x20
+    out 0xa0, al        ; send init command to slave PIC command port 0xa0
+
+    ; init(1)
+    ; set master PIC IRQ0 offset to 0x20 (eg. IRQ0 -> int num 32, IRQ1->33)
+    mov al, 0x20        ; master IRQ starting offset
+    out 0x21, al        ; send to master PIC data port 0x21
+    ; set slave PIC IRQ0 offset to 0x28 (eg. IRQ0 -> int num 40, IRQ1->41)
+    mov al, 0x28        ; slave IRQ starting offset
+    out 0xa1, al        ; send to slave PIC data port 0xa1
+
+    ; init(2)
+    ; tell master PIC in which slot slave PIC is connected
+    ; slave is connected to master IRQ2
+    mov al, 0x04        ; 0x04 = 0000 0100 -> IRQ2 bit is on
+    out 0x21, al
+    ; tell slave PIC in which slot on master PIC it is connected
+    mov al, 0x02        ; connected to IRQ2 on master
+    out 0xa1, al
+
+    ; init(3)
+    mov al, 0x01        ; set arch to x86 mode
+    out 0x21, al        ; set master PIC arch to x86
+    out 0xa1, al        ; set slave PIC arch to x86
+
+    mov al, 0x00
+    out 0x21, al        ; enable all IRQs on master PIC
+    out 0xa1, al        ; enable all IRQs on slave PIC
+
+    ret
+
+load_idt:
+    ; check load_gdt for more info
+    lidt [idtr - start]
     ret
 
 ; now we run in 32bit protected mode
@@ -80,6 +130,10 @@ start_kernel:
     mov fs, eax
     mov gs, eax
 
+    ; re-enable interrupts
+    sti
+
     call kernel_main
 
 %include "kernel/gdt.asm"
+%include "kernel/idt.asm"

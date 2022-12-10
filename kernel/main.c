@@ -23,6 +23,13 @@ void kernel_main()
     while(1);
 }
 
+void interrupt_handler(int interrupt_num)
+{
+    println();
+    print("Received interrupt: ");
+    printi(interrupt_num);
+}
+
 void print(const char *str)
 {
     while('\0' != *str)
