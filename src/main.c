@@ -1,15 +1,11 @@
 #include "printf.h"
 
+static void welcome_message();
+
 void kernel_main()
 {
     init_screen();
-    print("I AM ALIVE!");
-    println();
-    print("Protected mode activated");
-    println();
-    printi(777);
-    print("-Jackpot!");
-    println();
+    welcome_message();
     while(1);
 }
 
@@ -20,3 +16,8 @@ void interrupt_handler(int interrupt_num)
     printi(interrupt_num);
 }
 
+static void welcome_message()
+{
+    print("Hi...This is protected mode");
+    println();
+}
