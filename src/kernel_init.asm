@@ -4,6 +4,8 @@ bits 16
 ; external symbols defined elsewhere and linked by the linker
 extern kernel_main
 extern interrupt_handler
+extern scheduler
+extern run_next_process
 
 start:
     ; initialize segments
