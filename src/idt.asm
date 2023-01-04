@@ -168,11 +168,50 @@ isr_31:
     push 31
     jmp isr_basic
 
-; IRQs 32 to 48
-isr_32:
-    cli
-    push 32
-    jmp irq_basic
+isr_32:                             ; system timer interrupt
+    ; values stored by the suspended process on the general purpose registers
+    ; will be there when isr_32 starts executing, and the processor does
+    ; not change any of them when suspending the process and calling interrupt
+    ; handler.
+    ; This is due to the fact that we defined all ISRs gate descriptors as
+    ; interrupt gates in the IDT table.
+    ; if we were to define them as task gates instead, the context of the
+    ; suspended process will not be available on the processor's registers.
+    ; defining an ISR descriptor as an interrupt gate makes the processor
+    ; call this ISR as a normal routine following normal calling conventions.
+    cli                             ; disable interrupts while handling one
+
+    ; push current values of all general purpose registers into the stack
+    ; the opposite of pusha is popa, pop from stack into the registers
+    ; order: eax, ecx, edx, ebx, esp, ebp, esi, edi
+    ; based on the calling convention, they will be received as paramters
+    ; in revered order (see scheduler() signature in scheduler.c)
+    pusha                           ; push all
+
+    ; calling convention again, EIP gets pushed prior to calling the interrupt
+    ; handler, afterwards we stored 8 registers, so to get the EIP
+    ; before the interrupt handler was called we do ESP + 8registers * 4bytes
+    ; since EIP is pushed last, it is the first arg in scheduler() signature
+    mov eax, [esp + 32]
+    push eax
+
+    call scheduler
+
+    ; tell PIC interrupt handling is done (see irq_basic below)
+    mov al, 0x20
+    out 0x20, al
+
+    ; remove all pushed values on the stack while running isr_32 by adding
+    ; 40d to the current value of ESP
+    ; 40 = 8registers * 4bytes + EIP * 4bytes + previous EIP * 4bytes
+    ; the previous EIP is removed because we want to set a new EIP of the
+    ; new process (and not continue the last process)
+    add esp, 0x28
+
+    ; the new EIP is the memory address of run_next_process
+    push run_next_process
+
+    iret
 
 isr_33:
     cli
