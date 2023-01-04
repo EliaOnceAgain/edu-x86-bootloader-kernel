@@ -102,9 +102,9 @@ finished_printing:
 
 ; data after code 
 BOOT_DRIVE          db 0
-TITLE_STR           db "Bootloader for Curn", 0
-LOADING_STR         db "Loading Curn...", 0
-ERR_LOAD_STR        db "Failed to load Curn", 0
+TITLE_STR           db "Running bootloader", 0
+LOADING_STR         db "Loading kernel...", 0
+ERR_LOAD_STR        db "Failed to load kernel", 0
 NUM_SECTORS         db 0x0f                     ; 15 sectors = 7.5kb
 CURR_SECTOR_TO_READ db 0x02
 

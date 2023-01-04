@@ -4,6 +4,8 @@ bits 16
 ; external symbols defined elsewhere and linked by the linker
 extern kernel_main
 extern interrupt_handler
+extern scheduler
+extern run_next_process
 
 start:
     ; initialize segments
@@ -16,6 +18,7 @@ start:
     call init_video_mode
     call enable_protected_mode
     call setup_interrupts
+    call setup_task_register
 
     ; far jump after enabling protected mode
     ; 0x08 is the segment selector of kernel's code as specified in the GDT
@@ -116,6 +119,11 @@ load_idt:
     lidt [idtr - start]
     ret
 
+setup_task_register:
+    mov ax, 0x28        ; TSS descriptor is in 6th index in GDT (40d=5*8)
+    ltr ax              ; load task register
+    ret
+
 ; now we run in 32bit protected mode
 bits 32
 start_kernel:
@@ -135,5 +143,8 @@ start_kernel:
 
     call kernel_main
 
-%include "kernel/gdt.asm"
-%include "kernel/idt.asm"
+%include "src/gdt.asm"
+%include "src/idt.asm"
+
+tss:
+    dd 0
