@@ -47,16 +47,15 @@ $(BUILDDIR)/%.$(OBJEXT): $(SRCDIR)/%.$(SRCEXT)
 
 # Link and build kernel img
 $(TARGETDIR)/$(TARGET): dirs $(BUILDDIR)/$(BOOTLOADER:.asm=) $(BUILDDIR)/$(INIT_KERNEL:.asm=.o) $(OBJECTS)
-	$(LNK) $(LDFLAGS) $(BUILDDIR)/*.$(OBJEXT) -o kernel.elf
+	$(LNK) $(LDFLAGS) $(BUILDDIR)/*.$(OBJEXT) -o $(BUILDDIR)/kernel.elf
 
 	# no elf interpreter available, convert to flat binary
-	objcopy -O binary kernel.elf kernel.bin
+	objcopy -O binary $(BUILDDIR)/kernel.elf $(BUILDDIR)/kernel.bin
 
 	dd if=$(BUILDDIR)/$(BOOTLOADER:.asm=) of=$(TARGETDIR)/$(TARGET)
-	dd seek=1 conv=sync if=kernel.bin of=$(TARGETDIR)/$(TARGET) bs=512 count=5
 
-	# cleanup
-	rm -rf kernel.bin kernel.elf
+	# seek=N: skip N obs-sized (default 512b) blocks at start of output
+	dd seek=1 conv=sync if=$(BUILDDIR)/kernel.bin of=$(TARGETDIR)/$(TARGET) bs=512 count=10
 
 	@echo "build: Success"
 
