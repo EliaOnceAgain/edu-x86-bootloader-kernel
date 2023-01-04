@@ -295,7 +295,7 @@ isr_48:
 
 isr_basic:
     call interrupt_handler
-    add esp, 0x04           ; clean stack frame, pop previously pushed int num
+    pop eax
     sti                     ; re-enable interrupts
     iret                    ; iret = ret + reset the interrupt enable (IEN)
 
