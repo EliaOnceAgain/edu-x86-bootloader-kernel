@@ -1,21 +1,23 @@
-#include "printf.h"     /* print(), println(), printi()                     */
+#include "printf.h"     /* print(), printi()                                */
 #include "process.h"    /* init_process()                                   */
 #include "scheduler.h"  /* init_scheduler()                                 */
 #include "vsa.h"        /* init_vsa()                                       */
 
 static void proc1();
 static void proc2();
-static void welcome_message();
 
 void kernel_main()
 {
+    print("Initializing kernel...\n");
+
     vsa_t *vsa = init_vsa(0x100000); /* 1mb */
     init_process();
     init_scheduler();
-    welcome_message();
 
     create_process(vsa, proc1);
     create_process(vsa, proc2);
+
+    print("Initialization finished.\n");
 
     while(1);
 }
@@ -23,14 +25,8 @@ void kernel_main()
 void interrupt_handler(int interrupt_num)
 {
     println();
-    print("Received interrupt: ");
+    print("\nReceived interrupt: ");
     printi(interrupt_num);
-}
-
-static void welcome_message()
-{
-    print("Hi...This is protected mode");
-    println();
 }
 
 static void proc1()

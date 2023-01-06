@@ -12,9 +12,14 @@ void print(const char *str)
 {
     while('\0' != *str)
     {
-        video[print_ind_x * 2] = *str;
-        video[print_ind_x * 2 + 1] = 15;
-        ++print_ind_x;
+        if('\n' == *str)
+            println();
+        else
+        {
+            video[print_ind_x * 2] = *str;
+            video[print_ind_x * 2 + 1] = 15;
+            ++print_ind_x;
+        }
         ++str;
     }
 }
