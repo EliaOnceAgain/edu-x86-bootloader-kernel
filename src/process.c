@@ -1,5 +1,5 @@
 #include "process.h"
-#include "vsa.h"        /* vsa_t                                            */
+#include "vsa.h"        /* vsa_t, alloc()                                   */
 
 void init_process()
 {
