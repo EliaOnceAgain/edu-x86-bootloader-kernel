@@ -7,6 +7,8 @@ static int print_ind_x = 0;
 static int print_ind_y = 0;
 static const char* DIGITS_STR[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
+static void print_num(const int num);
+
 
 void print(const char *str)
 {
@@ -26,11 +28,10 @@ void print(const char *str)
 
 void printi(const int num)
 {
-    if(0 < num)
-    {
-        printi(num / 10);
-        print(DIGITS_STR[num % 10]);
-    }
+    if(!num)
+        print(DIGITS_STR[0]);
+    else
+        print_num(num);
 }
 
 void println()
@@ -38,3 +39,11 @@ void println()
     print_ind_x = ++print_ind_y * NUM_COLS;
 }
 
+static void print_num(const int num)
+{
+    if(0 < num)
+    {
+        print_num(num / 10);
+        print(DIGITS_STR[num % 10]);
+    }
+}
