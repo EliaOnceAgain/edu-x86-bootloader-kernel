@@ -29,9 +29,20 @@ void print(const char *str)
 void printi(const int num)
 {
     if(!num)
+    {
         print(DIGITS_STR[0]);
+        return;
+    }
+
+    if(num < 0)
+    {
+        print("-");
+        print_num(-num);
+    }
     else
+    {
         print_num(num);
+    }
 }
 
 void println()
