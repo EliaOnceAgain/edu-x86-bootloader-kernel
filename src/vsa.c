@@ -9,7 +9,7 @@ struct vsa {
 };
 
 typedef struct block_header {
-    unsigned int block_size;
+    long int block_size;
 } block_header_t;
 
 static long max(long num1, long num2);
