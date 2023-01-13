@@ -13,8 +13,6 @@ unsigned int *page_directory;
 /*
  * DESCRIPTION:
  * load kernel page directory address to CR3 register
- *
- * 
  */
 extern void load_page_directory();
 
