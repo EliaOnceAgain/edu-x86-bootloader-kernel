@@ -55,7 +55,8 @@ $(TARGETDIR)/$(TARGET): dirs $(BUILDDIR)/$(BOOTLOADER:.asm=) $(BUILDDIR)/$(INIT_
 	dd if=$(BUILDDIR)/$(BOOTLOADER:.asm=) of=$(TARGETDIR)/$(TARGET)
 
 	# seek=N: skip N obs-sized (default 512b) blocks at start of output
-	dd seek=1 conv=sync if=$(BUILDDIR)/kernel.bin of=$(TARGETDIR)/$(TARGET) bs=512 count=10
+	dd seek=1 conv=sync if=$(BUILDDIR)/kernel.bin of=$(TARGETDIR)/$(TARGET) bs=512 count=15
+	dd seek=16 conv=sync if=/dev/zero of=$(TARGETDIR)/$(TARGET) bs=512 count=50000
 
 	@echo "build: Success"
 
