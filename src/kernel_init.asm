@@ -6,6 +6,10 @@ extern kernel_main
 extern interrupt_handler
 extern scheduler
 extern run_next_process
+extern page_directory
+
+global load_page_directory
+global enable_paging
 
 start:
     ; initialize segments
@@ -126,6 +130,20 @@ setup_task_register:
 
 ; now we run in 32bit protected mode
 bits 32
+
+load_page_directory:
+    ; move contents of page_directory to CR3
+    mov eax, [page_directory]
+    mov cr3, eax
+    ret
+
+enable_paging:
+    ; enable paging by setting last bit (bit 31) of CR0
+    mov eax, cr0
+    or eax, 0x80000000
+    mov cr0, eax
+    ret
+
 start_kernel:
     ; same as we set code segment selector to 0x08
     ; the data segment is set to 0x10 (16d bytes in the GDT)

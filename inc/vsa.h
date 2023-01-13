@@ -4,7 +4,8 @@
 #define __KERNEL_VSA_H__
 
 #define NULL 0
-#define HEAP_START 0x100000
+#define HEAP_SIZE 0x100000      /* 1mb */
+#define HEAP_START 0x600000
 
 typedef struct vsa vsa_t;
 

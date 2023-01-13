@@ -1,4 +1,5 @@
 #include "scheduler.h"
+#include "process.h"        /* process_table                                */
 #include "printf.h"         /* print(), printi()                            */
 
 void init_scheduler()
