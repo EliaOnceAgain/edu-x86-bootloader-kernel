@@ -1,5 +1,5 @@
 #include "paging.h"
-#include "printf.h"     /* DELETE ME PLS */
+#include "printf.h"         /* print(), print0x()                           */
 
 static void print_paging_addr_range(void *);
 
