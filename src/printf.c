@@ -17,13 +17,36 @@ void print(const char *str)
         if('\n' == *str)
             println();
         else
-        {
-            video[print_ind_x * 2] = *str;
-            video[print_ind_x * 2 + 1] = 15;
-            ++print_ind_x;
-        }
+            printc(*str);
         ++str;
     }
+}
+
+void printc(const char c)
+{
+    video[print_ind_x * 2] = c;
+    video[print_ind_x * 2 + 1] = 15;
+    ++print_ind_x;
+}
+
+void print0x(const int num)
+{
+    int quotient = num;
+    int remainder = 0;
+    int i = 0;
+    char hex_arr[16] = {0};
+
+    while(0 != quotient)
+    {
+        remainder = quotient % 16;  /* todo: bitwise */
+        hex_arr[i++] = remainder < 10 ? 48 + remainder : 55 + remainder;
+        quotient /= 16;
+    }
+    hex_arr[i++] = 'x';
+    hex_arr[i++] = '0';
+
+    for(--i; i >= 0; --i)
+        printc(hex_arr[i]);
 }
 
 void printi(const int num)

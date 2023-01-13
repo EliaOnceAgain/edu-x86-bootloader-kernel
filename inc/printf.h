@@ -12,6 +12,24 @@ void print(const char *);
 
 /*
  * DESCRIPTION:
+ * print a single character
+ *
+ * PARAMS:
+ * const char           char to print
+ */
+void printc(const char);
+
+/*
+ * DESCRIPTION:
+ * print an integer in hex
+ *
+ * PARAMS:
+ * const int            integer to print
+ */
+void print0x(const int);
+
+/*
+ * DESCRIPTION:
  * print an integer
  *
  * PARAMS:
