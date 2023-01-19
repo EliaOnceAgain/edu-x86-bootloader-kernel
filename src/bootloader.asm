@@ -8,11 +8,6 @@ org 0x7C00
 bits 16
 
 start:
-    ; bios stores boot drive in DL at start
-    ; this is the only register value we can rely
-    ; on the bios to set
-    mov [BOOT_DRIVE], dl
-
     ; set stack base pointer BP
     mov bp, 0x7C00
 
@@ -20,6 +15,11 @@ start:
     xor ax, ax
     mov ds, ax
     mov es, ax
+
+    ; bios stores boot drive in DL at start
+    ; this is the only register value we can rely
+    ; on the bios to set
+    mov [BOOT_DRIVE], dl
 
     ; setup the stack before bootloader SS:SP 0x0000:0x7C00
     ; cli for legacy compatibility where interrupts are not
