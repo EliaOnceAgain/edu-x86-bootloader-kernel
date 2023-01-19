@@ -25,7 +25,7 @@ gdt:
 ; GDTR contents
 gdtr:
     ; gdt table size = num_entries * entry_size_in_bytes
-    gdt_size_in_bytes               : dw (6 * 8)
+    gdt_size_in_bytes               : dw (6 * 8 - 1)
     ; set *physical* memory address
     ; when the processor tries to reach GDT it
     ; doesn't consult any segment registers
