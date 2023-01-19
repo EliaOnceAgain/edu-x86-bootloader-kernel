@@ -41,9 +41,7 @@ load_gdt:
     ; memory address. 
     ; NASM derenferencing (square brackets) in realmode consults the segment
     ; register DS and considers the address an offset.
-    ; so when we refer to GDTR we need to supply an offset from DS (our data
-    ; segment); hence the [GDTR - start]
-    lgdt [gdtr - start]
+    lgdt [gdtr]
     ret
 
 init_video_mode:
@@ -120,7 +118,7 @@ remap_pic:
 
 load_idt:
     ; check load_gdt for more info
-    lidt [idtr - start]
+    lidt [idtr]
     ret
 
 setup_task_register:

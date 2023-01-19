@@ -40,7 +40,7 @@ start:
     call print_str
 
     call load_kernel_to_mem
-    jmp 0x0900:0x0000
+    jmp 0x0000:0x9000
 
 ; load kernel
 load_kernel_to_mem:
