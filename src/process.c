@@ -1,6 +1,9 @@
 #include "process.h"
 #include "vsa.h"        /* vsa_t, alloc()                                   */
 
+process_t *process_table[15];
+int processes_count, curr_pid;
+
 void init_process()
 {
     processes_count = 0;

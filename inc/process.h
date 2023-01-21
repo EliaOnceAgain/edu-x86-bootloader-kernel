@@ -21,9 +21,8 @@ typedef struct process {
     int *base_addr;
 } process_t;
 
-process_t *process_table[15];
-
-int processes_count, curr_pid;
+extern process_t *process_table[15];
+extern int processes_count, curr_pid;
 
 /*
  * DESCRIPTION:

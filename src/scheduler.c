@@ -2,6 +2,9 @@
 #include "process.h"        /* process_table                                */
 #include "printf.h"         /* print(), printi()                            */
 
+int next_scheduled_pid, curr_scheduled_pid;
+process_t *next_process;
+
 void init_scheduler()
 {
     next_scheduled_pid = 0;

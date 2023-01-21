@@ -1,6 +1,8 @@
 #include "paging.h"
 #include "printf.h"         /* print(), print0x()                           */
 
+unsigned int *page_directory;
+
 static void print_paging_addr_range(void *);
 
 void init_paging()
