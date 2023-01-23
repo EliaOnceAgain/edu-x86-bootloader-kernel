@@ -20,12 +20,12 @@ gdt:
     ; expand-direction=up opsize=4gb 64bit=false
     userspace_data_descriptor       : dw 0xffff, 0x0000, 0xf200, 0x00cf
     ; TSS segment
-    tss_descriptor                  : dw tss + 3, tss, 0x8900, 0x0000
+    tss_descriptor                  : dw TSS_SIZE, tss, 0x8900, 0x0000
 
 ; GDTR contents
 gdtr:
     ; gdt table size = num_entries * entry_size_in_bytes
-    gdt_size_in_bytes               : dw (6 * 8)
+    gdt_size_in_bytes               : dw (6 * 8 - 1)
     ; set *physical* memory address
     ; when the processor tries to reach GDT it
     ; doesn't consult any segment registers

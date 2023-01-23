@@ -8,7 +8,7 @@
 #define PDE_BYTES 4             /* page directory entry size in bytes       */
 #define PAGE_SIZE 4096          /* page frame size                          */
 
-unsigned int *page_directory;
+extern unsigned int *page_directory;
 
 /*
  * DESCRIPTION:

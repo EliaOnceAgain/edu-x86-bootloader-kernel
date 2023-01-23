@@ -20,17 +20,8 @@ start:
 
     call load_gdt
     call init_video_mode
-    call enable_protected_mode
     call setup_interrupts
-    call setup_task_register
-
-    ; far jump after enabling protected mode
-    ; 0x08 is the segment selector of kernel's code as specified in the GDT
-    ; any logical memory address that refers to the kernel's code should refer
-    ; to the segment selector 0x08 which is the location of kernel's code
-    ; segment in the GDT
-    ; after far jump, the processor loads the segment selector to CS
-    call 0x08:start_kernel
+    call enable_protected_mode
 
 load_gdt:
     ; according to Intel's x86 manual it is recommended to disable interrupts
@@ -41,9 +32,10 @@ load_gdt:
     ; memory address. 
     ; NASM derenferencing (square brackets) in realmode consults the segment
     ; register DS and considers the address an offset.
-    ; so when we refer to GDTR we need to supply an offset from DS (our data
-    ; segment); hence the [GDTR - start]
-    lgdt [gdtr - start]
+    lgdt [gdtr]
+
+    sti                 ; enable interrupts
+
     ret
 
 init_video_mode:
@@ -63,13 +55,22 @@ init_video_mode:
     ret
 
 enable_protected_mode:
+    cli                 ; disable interrupts
+
     ; control registers eg. CR0 detemine the behavior of the processor
     ; control registers are 32bit and can not be manipulated directly
     ; CR0 bit index 0 sets protected-mode, below we make sure its enabled
     mov eax, cr0
     or eax, 1
     mov cr0, eax
-    ret
+
+    ; far jump after enabling protected mode
+    ; 0x08 is the segment selector of kernel's code as specified in the GDT
+    ; any logical memory address that refers to the kernel's code should refer
+    ; to the segment selector 0x08 which is the location of kernel's code
+    ; segment in the GDT
+    ; after far jump, the processor loads the segment selector to CS
+    call 0x08:start_kernel
 
 setup_interrupts:
     call remap_pic
@@ -120,16 +121,16 @@ remap_pic:
 
 load_idt:
     ; check load_gdt for more info
-    lidt [idtr - start]
+    lidt [idtr]
     ret
+
+; now we run in 32bit protected mode
+bits 32
 
 setup_task_register:
     mov ax, 0x28        ; TSS descriptor is in 6th index in GDT (40d=5*8)
     ltr ax              ; load task register
     ret
-
-; now we run in 32bit protected mode
-bits 32
 
 load_page_directory:
     ; move contents of page_directory to CR3
@@ -150,14 +151,17 @@ start_kernel:
     mov eax, 0x10
     mov ds, eax
     mov ss, eax
-
-    mov eax, 0x00
     mov es, eax
     mov fs, eax
     mov gs, eax
 
-    ; re-enable interrupts
-    sti
+    ; set ESP
+    mov ebp, 0x9000
+    mov esp, ebp
+
+    call setup_task_register
+
+    sti                 ; enable interrupts
 
     call kernel_main
 
@@ -165,4 +169,33 @@ start_kernel:
 %include "src/idt.asm"
 
 tss:
-    dd 0
+    .back_link: dd 0
+    .esp0:      dd 0              ; Kernel stack pointer used on ring transitions
+    .ss0:       dd 0              ; Kernel stack segment used on ring transitions
+    .esp1:      dd 0
+    .ss1:       dd 0
+    .esp2:      dd 0
+    .ss2:       dd 0
+    .cr3:       dd 0
+    .eip:       dd 0
+    .eflags:    dd 0
+    .eax:       dd 0
+    .ecx:       dd 0
+    .edx:       dd 0
+    .ebx:       dd 0
+    .esp:       dd 0
+    .ebp:       dd 0
+    .esi:       dd 0
+    .edi:       dd 0
+    .es:        dd 0
+    .cs:        dd 0
+    .ss:        dd 0
+    .ds:        dd 0
+    .fs:        dd 0
+    .gs:        dd 0
+    .ldt:       dd 0
+    .trap:      dw 0
+    .iomap_base:dw TSS_SIZE         ; IOPB offset
+    ;.cetssp:    dd 0               ; Need this if CET is enabled
+
+    TSS_SIZE EQU $-tss

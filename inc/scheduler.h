@@ -3,8 +3,8 @@
 
 #include "process.h"
 
-int next_scheduled_pid, curr_scheduled_pid;
-process_t *next_process;
+extern int next_scheduled_pid, curr_scheduled_pid;
+extern process_t *next_process;
 
 /*
  * DESCRIPTION:

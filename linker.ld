@@ -3,6 +3,7 @@ SECTIONS
   .text 0x09000 :
   {
     code = .; _code = .; __code = .;
+    obj/kernel_init.o(.text)
     *(.text)
   }
 

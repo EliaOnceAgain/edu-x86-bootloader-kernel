@@ -380,5 +380,5 @@ idt:
 ; label idtr must be right below label idt
 ; for it to automatically detect size (instead of hard coding it)
 idtr:
-    idt_size_in_bytes   :     dw idtr - idt
+    idt_size_in_bytes   :     dw (idtr - idt - 1)
     idt_base_address    :     dd idt
