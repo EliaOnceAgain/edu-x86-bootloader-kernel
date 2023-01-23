@@ -20,7 +20,7 @@ gdt:
     ; expand-direction=up opsize=4gb 64bit=false
     userspace_data_descriptor       : dw 0xffff, 0x0000, 0xf200, 0x00cf
     ; TSS segment
-    tss_descriptor                  : dw tss + 3, tss, 0x8900, 0x0000
+    tss_descriptor                  : dw TSS_SIZE, tss, 0x8900, 0x0000
 
 ; GDTR contents
 gdtr:
