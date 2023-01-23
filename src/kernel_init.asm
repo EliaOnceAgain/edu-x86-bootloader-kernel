@@ -168,6 +168,7 @@ start_kernel:
 %include "src/gdt.asm"
 %include "src/idt.asm"
 
+; https://stackoverflow.com/questions/54876039/creating-a-proper-task-state-segment-tss-structure-with-and-without-an-io-bitm
 tss:
     .back_link: dd 0
     .esp0:      dd 0              ; Kernel stack pointer used on ring transitions
